@@ -31,6 +31,9 @@ class MyServer(BaseHTTPRequestHandler):
 			if self.path.endswith(".gif"):
 				mimetype='image/gif'
 				sendReply = True
+			if self.path.endswith(".png"):
+				mimetype='image/png'
+				sendReply = True
 			if self.path.endswith(".js"):
 				mimetype='application/javascript'
 				sendReply = True
@@ -57,9 +60,11 @@ class MyServer(BaseHTTPRequestHandler):
 
 		print( "incomming http: ", self.path )
 
-		content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
-		post_data = self.rfile.read(content_length) # <--- Gets the data itself
 		self.send_response(200)
+		self.send_header('Content-type','text/html')
+		self.end_headers()
+		self.wfile.write(b"Ok!")
+		return
 
 
 myServer = HTTPServer((hostName, hostPort), MyServer)

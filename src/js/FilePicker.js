@@ -98,6 +98,8 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
 
     function onSuccess(blob) {
       eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
+      console.log("Document Saved");
+      $.post("/send", "hellow");
 
       if (options.success) {
         options.success();
