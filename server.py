@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+# Credits:
+# https://www.acmesystems.it/python_http
+# http://joelinoff.com/blog/?p=1658
+
 import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
