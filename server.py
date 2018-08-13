@@ -29,6 +29,8 @@ class MyServer(BaseHTTPRequestHandler):
 			self.do_index()
 		elif self.path == '/getmaps':
 			self.do_get_maps()
+		elif self.path == '/getfile':
+			self.do_get_file()
 		elif path.path.endswith(allowed_filetypes):
 			self.do_index()
 		else:
@@ -38,14 +40,28 @@ class MyServer(BaseHTTPRequestHandler):
 	
 	def do_get_maps(self):
 		print("Going to get maps")
-		files = glob.glob(os.curdir + "/maps/" + "*.json")
-		print(glob.glob(os.curdir + "/maps/" + "*.json"))
+		files = glob.glob(os.getcwd() + "/maps/" + "*.json")
+		print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
 
 		self.send_response(200)
 		self.send_header('Content-type','text/json')
 		self.end_headers()
 		self.wfile.write(json.dumps(files).encode('utf-8'))
-		return		
+		return
+	
+	def do_get_file(self):
+		print("Going to open file")
+		files = glob.glob(os.getcwd() + "/maps/" + "*.json")
+		print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
+
+		print(files[0])
+		
+		self.send_response(200)
+		self.send_header('Content-type','text/json')
+		self.end_headers()
+		with open(files[0]) as data_file:
+			self.wfile.write(data_file.read().encode('utf-8'))
+		return
 		
 	# Credit: https://stackoverflow.com/questions/18346583/how-do-i-map-incoming-path-requests-when-using-httpserver
 	# https://stackoverflow.com/questions/3474045/problems-with-my-basehttpserver
