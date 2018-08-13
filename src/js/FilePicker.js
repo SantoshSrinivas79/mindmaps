@@ -74,8 +74,8 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
     filepicker.pick({
       mimetype: mimetype,
       container: 'modal',
-      openTo: 'DROPBOX',
-      services: ['COMPUTER', 'GOOGLE_DRIVE', 'DROPBOX', 'BOX', 'SKYDRIVE']
+      openTo: 'BOX',
+      services: ['BOX']
     }, onSuccess, onError);
   };
 
@@ -120,8 +120,8 @@ mindmaps.FilePicker = function(eventBus, mindmapModel) {
         mimetype: mimetype,
         suggestedFilename: doc.title,
         container: 'modal',
-        openTo: 'DROPBOX',
-        services: ['DROPBOX', 'BOX', 'SKYDRIVE', 'GOOGLE_DRIVE']
+        openTo: 'BOX',
+        services: ['BOX']
       }, onSuccess, onError);
     });
   }

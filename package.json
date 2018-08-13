@@ -16,8 +16,8 @@
     "url": "http://github.com/drichard/mindmaps/issues"
   },
   "scripts": {
-    "start": "http-server ./src -p 3000",
-    "start:prod": "npm run build && cd bin && python -m SimpleHTTPServer 3000",
+    "start": "http-server ./src -p 8996",
+    "start:prod": "npm run build && cd dist && python -m http.server 8995",
     "build": "jake"
   },
   "license": {
