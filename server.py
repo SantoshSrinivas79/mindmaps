@@ -10,7 +10,7 @@ import time
 import os
 from urllib.parse import urlparse, parse_qs
 import json
-
+import glob
 
 hostName = ""
 hostPort = 8996
@@ -38,11 +38,13 @@ class MyServer(BaseHTTPRequestHandler):
 	
 	def do_get_maps(self):
 		print("Going to get maps")
+		files = glob.glob(os.curdir + "/maps/" + "*.json")
+		print(glob.glob(os.curdir + "/maps/" + "*.json"))
 
 		self.send_response(200)
 		self.send_header('Content-type','text/json')
 		self.end_headers()
-		self.wfile.write(b"Here are the maps")
+		self.wfile.write(json.dumps(files).encode('utf-8'))
 		return		
 		
 	# Credit: https://stackoverflow.com/questions/18346583/how-do-i-map-incoming-path-requests-when-using-httpserver
@@ -102,9 +104,10 @@ class MyServer(BaseHTTPRequestHandler):
 		self.end_headers()
 
 		data = json.loads(self.data_string)
-		print(data)
+		# print(data)
+		print(data['title'])
 		
-		with open("test123456.json", "w") as outfile:
+		with open(os.curdir + "/maps/" + data['title']+".json", "w") as outfile:
 			json.dump(data, outfile)
 
 		self.send_response(200)
