@@ -8,6 +8,9 @@ import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 import os
+from urllib.parse import urlparse, parse_qs
+import json
+
 
 hostName = ""
 hostPort = 8996
@@ -15,12 +18,40 @@ hostPort = 8996
 os.chdir("src")
 
 class MyServer(BaseHTTPRequestHandler):
-
 	#Handler for the GET requests
 	def do_GET(self):
+		path = urlparse(self.path)
+		query = path.query
+		allowed_filetypes = (".html", ".css", ".png", ".jpg",  ".gif", ".ico",".js")
+
 		if self.path=="/":
 			self.path="/index.html"
+			self.do_index()
+		elif self.path == '/getmaps':
+			self.do_get_maps()
+		elif path.path.endswith(allowed_filetypes):
+			self.do_index()
+		else:
+			self.do_index()
+		
+		return None
+	
+	def do_get_maps(self):
+		print("Going to get maps")
 
+		self.send_response(200)
+		self.send_header('Content-type','text/json')
+		self.end_headers()
+		self.wfile.write(b"Here are the maps")
+		return		
+		
+	# Credit: https://stackoverflow.com/questions/18346583/how-do-i-map-incoming-path-requests-when-using-httpserver
+	# https://stackoverflow.com/questions/3474045/problems-with-my-basehttpserver
+	# https://github.com/cuamckuu/NotesApp/blob/master/server.py
+	# https://github.com/davesnowdon/nao-wanderer/blob/master/wanderer/src/main/python/wanderer/http.py
+	# https://pymotw.com/3/http.server/index.html
+
+	def do_index(self):
 		try:
 			#Check the file extension required and
 			#set the right mime type
@@ -47,7 +78,7 @@ class MyServer(BaseHTTPRequestHandler):
 
 			if sendReply == True:
 				#Open the static file requested and send it
-				f = open(os.getcwd() + "/"+self.path, 'rb') 
+				f = open(os.getcwd() + "/"+self.path, 'rb')
 				self.send_response(200)
 				self.send_header('Content-type',mimetype)
 				self.end_headers()
@@ -63,6 +94,18 @@ class MyServer(BaseHTTPRequestHandler):
 	def do_POST(self):
 
 		print( "incomming http: ", self.path )
+		
+		print("in post method")
+		self.data_string = self.rfile.read(int(self.headers['Content-Length']))
+
+		self.send_response(200)
+		self.end_headers()
+
+		data = json.loads(self.data_string)
+		print(data)
+		
+		with open("test123456.json", "w") as outfile:
+			json.dump(data, outfile)
 
 		self.send_response(200)
 		self.send_header('Content-type','text/html')

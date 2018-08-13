@@ -151,8 +151,18 @@ mindmaps.SaveDocumentPresenter = function(eventBus, mindmapModel, view, autosave
     var filename = mindmapModel.getMindMap().getRoot().getCaption() + ".json";
     var content = mindmapModel.getDocument().prepareSave().serialize();
     var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
-    window.saveAs(blob, filename);
-
+    // window.saveAs(blob, filename);
+    
+    console.log("Going to save to server");
+    
+    $.ajax({
+      type: 'POST',
+      url: '/save',
+      data: blob,
+      contentType: 'application/json', // set accordingly
+      processData: false
+    });
+  
     var doc = mindmapModel.getDocument();
     eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
     view.hideSaveDialog();
