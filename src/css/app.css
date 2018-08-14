@@ -753,3 +753,50 @@ html,body {
   z-index: 10000;
   background: inherit;
 }
+
+
+/*more hacks*/
+
+.file-dialog .server-filelist {
+  width: 100%;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+.file-dialog .server-filelist thead {
+  font-weight: bold;
+  text-align: left;
+}
+
+.file-dialog .server-filelist th {
+  padding-bottom: 4px;
+}
+
+.file-dialog .server-filelist th.title {
+  width: 50%;
+}
+
+.file-dialog .server-filelist th.modified {
+  width: 40%;
+}
+
+.file-dialog .server-filelist tbody td {
+  padding: 4px;
+}
+
+.file-dialog .server-filelist tbody tr:nth-child(odd) {
+  background-color: #E8E8E8;
+}
+
+.file-dialog .server-filelist tbody tr:hover,.file-dialog .server-filelist tbody tr:nth-child(odd):hover
+  {
+  background-color: #B9E0F5;
+}
+
+.file-dialog .server-filelist a.delete {
+  display: none;
+}
+
+.file-dialog .server-filelist tr:hover a.delete {
+  display: inline;
+}

@@ -52,7 +52,6 @@ mindmaps.OpenDocumentView = function() {
   this.render = function(docs) {
     // empty list and insert list of documents
     var $list = $(".document-list", $dialog).empty();
-
     $("#template-open-table-item").tmpl(docs, {
       format : function(date) {
         if (!date) return "";
@@ -63,6 +62,39 @@ mindmaps.OpenDocumentView = function() {
         return day + "/" + month + "/" + year;
       }
     }).appendTo($list);
+    
+    docs = new Array();
+    
+    doc = new Object();
+    doc.title = "My Resume";
+    doc.date = "";
+    docs.push(doc);
+
+    doc = new Object();
+    doc.title = "My Second Resume";
+    doc.date = "";
+    docs.push(doc);
+    
+    doc = new Object();
+    doc.title = "My Third Resume";
+    doc.date = "";
+    docs.push(doc);
+
+    // Hack to populate server list too!
+    // empty list and insert list of documents
+    var $list = $(".my-document-list", $dialog).empty();
+    $("#my-template-open-table-item").tmpl(docs, {
+      format : function(date) {
+        if (!date) return "";
+
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+        return day + "/" + month + "/" + year;
+      }
+    }).appendTo($list);
+
+
   };
 
   /**

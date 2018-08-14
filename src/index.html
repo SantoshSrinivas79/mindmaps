@@ -51,6 +51,12 @@
 </tr>
 </script>
 
+<script id="my-template-open-table-item" type="text/x-jquery-tmpl">
+<tr>
+  <td><a class="title" href="#">${title}</a></td>
+</tr>
+</script>
+
 <script id="template-open" type="text/x-jquery-tmpl">
 <div id="open-dialog" class="file-dialog" title="Open mind map">
   <h1><span class="highlight">Works again!</span> In the Cloud: Dropbox and more</h1>
@@ -74,6 +80,19 @@
   <div class="seperator"></div>
   <h1>From file</h1>
   <p>Choose a mind map from your computer's hard drive.</p>
+
+  <p>This is a list of all mind maps on the server. Click on the title of a map to open it.</p>
+  <table class="server-filelist">
+    <thead>
+      <tr>
+        <th class="title">Title</th>
+      </tr>
+    </thead>
+    <tbody class="my-document-list"></tbody>
+  </table>
+  <div class="seperator"></div>
+
+
   <div class="file-chooser">
     <input type="file" />
   </div>
