@@ -151,7 +151,19 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
     var reader = new FileReader();
     reader.onload = function() {
       try {
-        var doc = mindmaps.Document.fromJSON(reader.result);
+        // var doc = mindmaps.Document.fromJSON(reader.result);
+        var jsonMap = 
+              $.ajax({
+                  dataType: "json",
+                  url: "http://santoshsrinivas.com:8996/getfile",
+                  async: false, 
+                  success: function(json) {
+                    return json;
+                  }
+                });
+                
+        jsonMap = (jsonMap.responseText);
+        var doc = mindmaps.Document.fromJSON(jsonMap);
       } catch (e) {
         eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, 'File is not a valid mind map!');
         throw new Error('Error while opening map from hdd', e);
