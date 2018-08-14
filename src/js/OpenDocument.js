@@ -43,6 +43,16 @@ mindmaps.OpenDocumentView = function() {
       self.deleteDocumentClicked(t.data);
     }
   });
+  
+  // Handle click of server file
+  var $my_table = $dialog.find(".server-filelist");
+  $my_table.delegate("a.title", "click", function() {
+    if (self.my_documentClicked) {
+      var t = $(this).tmplItem();
+      console.log(t.data);
+      self.my_documentClicked(t.data.title);
+    }
+  });
 
   /**
   * Render list of documents in the local storage
@@ -62,24 +72,35 @@ mindmaps.OpenDocumentView = function() {
         return day + "/" + month + "/" + year;
       }
     }).appendTo($list);
+
+
+    var mapList = 
+                $.ajax({
+                    type: 'GET',
+                    url: "/getmaps",
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    async: false,
+                    success: function(json) {
+                      return json;
+                    }
+                  });
+
+    mapList = JSON.parse(mapList.responseText);
+    console.log((mapList));
     
     docs = new Array();
     
-    doc = new Object();
-    doc.title = "My Resume";
-    doc.date = "";
-    docs.push(doc);
-
-    doc = new Object();
-    doc.title = "My Second Resume";
-    doc.date = "";
-    docs.push(doc);
+    $.each(mapList, function(k, m) {
+      doc = new Object();
+      doc.title = m;
+      doc.data = "";
+      docs.push(doc);
+    });
     
-    doc = new Object();
-    doc.title = "My Third Resume";
-    doc.date = "";
-    docs.push(doc);
-
+    
+    console.log(docs);
+    
     // Hack to populate server list too!
     // empty list and insert list of documents
     var $list = $(".my-document-list", $dialog).empty();
@@ -225,6 +246,45 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
   */
   view.documentClicked = function(doc) {
     mindmaps.Util.trackEvent("Clicks", "localstorage-open");
+    
+    mindmapModel.setDocument(doc);
+    view.hideOpenDialog();
+  };
+
+  // Handle the click of the server file item document
+  view.my_documentClicked = function(title) {
+    mindmaps.Util.trackEvent("Clicks", "server-open");
+    
+    console.log(title);
+    console.log("Server document clicked");
+    try {
+        var doc = {
+          title : title
+        }
+        
+        var jsonMap = 
+              $.ajax({
+                  type: 'POST',
+                  url: "/loadmap",
+                  dataType: 'json',
+                  contentType: 'application/json',
+                  async: false,
+                  data: JSON.stringify(doc),
+                  success: function(json) {
+                    return json;
+                  }
+                });
+
+        console.log(jsonMap);
+        jsonMap = (jsonMap.responseText);
+        var doc = mindmaps.Document.fromJSON(jsonMap);
+      } catch (e) {
+        eventBus.publish(mindmaps.Event.NOTIFICATION_ERROR, 'File is not a valid mind map!');
+        throw new Error('Error while opening map from hdd', e);
+      }
+      
+      mindmapModel.setDocument(doc);
+      view.hideOpenDialog();
     
     mindmapModel.setDocument(doc);
     view.hideOpenDialog();

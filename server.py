@@ -42,6 +42,8 @@ class MyServer(BaseHTTPRequestHandler):
 		print("Going to get maps")
 		files = glob.glob(os.getcwd() + "/maps/" + "*.json")
 		print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
+		
+		files = os.listdir(os.getcwd() + "/maps/");
 
 		self.send_response(200)
 		self.send_header('Content-type','text/json')
@@ -131,15 +133,15 @@ class MyServer(BaseHTTPRequestHandler):
 		# print(data)
 		print(data['title'])
 
-		files = glob.glob(os.getcwd() + "/maps/" + "*.json")
-		print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
+		# files = glob.glob(os.getcwd() + "/maps/" + "*.json")
+		# print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
 
-		print(files[0])
+		# print(files[0])
 		
 		self.send_response(200)
 		self.send_header('Content-type','text/json')
 		self.end_headers()
-		with open(files[0]) as data_file:
+		with open(os.getcwd() + "/maps/" + data['title']) as data_file:
 			self.wfile.write(data_file.read().encode('utf-8'))
 		return		
 		
