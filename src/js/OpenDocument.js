@@ -184,16 +184,25 @@ mindmaps.OpenDocumentPresenter = function(eventBus, mindmapModel, view, filePick
     reader.onload = function() {
       try {
         // var doc = mindmaps.Document.fromJSON(reader.result);
+        
+        var doc = {
+          title : "Auction Resume.json"
+        }
+        
         var jsonMap = 
               $.ajax({
-                  dataType: "json",
-                  url: "http://santoshsrinivas.com:8996/getfile",
-                  async: false, 
+                  type: 'POST',
+                  url: "/loadmap",
+                  dataType: 'json',
+                  contentType: 'application/json',
+                  async: false,
+                  data: JSON.stringify(doc),
                   success: function(json) {
                     return json;
                   }
                 });
-                
+
+        console.log(jsonMap);
         jsonMap = (jsonMap.responseText);
         var doc = mindmaps.Document.fromJSON(jsonMap);
       } catch (e) {

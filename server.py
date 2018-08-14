@@ -111,8 +111,39 @@ class MyServer(BaseHTTPRequestHandler):
 	#	POST is for submitting data.
 	def do_POST(self):
 
-		print( "incomming http: ", self.path )
+		if self.path=="/save":
+			self.do_save()
+		elif self.path == '/loadmap':
+			self.do_load_map()
+		else:
+			print( "incomming http: ", self.path )
+			self.send_response(200)
+			self.send_header('Content-type','text/html')
+			self.end_headers()
+			self.wfile.write(b"Ok!")
+			return
+	
+	def do_load_map(self):
+		print("Going to open the requested file")
+
+		self.data_string = self.rfile.read(int(self.headers['Content-Length']))
+		data = json.loads(self.data_string)
+		# print(data)
+		print(data['title'])
+
+		files = glob.glob(os.getcwd() + "/maps/" + "*.json")
+		print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
+
+		print(files[0])
 		
+		self.send_response(200)
+		self.send_header('Content-type','text/json')
+		self.end_headers()
+		with open(files[0]) as data_file:
+			self.wfile.write(data_file.read().encode('utf-8'))
+		return		
+		
+	def do_save(self):
 		print("in post method")
 		self.data_string = self.rfile.read(int(self.headers['Content-Length']))
 
