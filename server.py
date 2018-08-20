@@ -5,7 +5,11 @@
 # http://joelinoff.com/blog/?p=1658
 
 import socket
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import HTTPServer
+
+# Credit: https://github.com/Granitosaurus/sauth
+from sauth import SimpleHTTPAuthHandler
+
 import time
 import os
 from urllib.parse import urlparse, parse_qs
@@ -17,53 +21,88 @@ hostPort = 8996
 
 os.chdir("src")
 
-class MyServer(BaseHTTPRequestHandler):
+SimpleHTTPAuthHandler.username = "santosh"
+SimpleHTTPAuthHandler.password = "hello"
+
+class MyServer(SimpleHTTPAuthHandler):
 	#Handler for the GET requests
 	def do_GET(self):
-		path = urlparse(self.path)
-		query = path.query
-		allowed_filetypes = (".html", ".css", ".png", ".jpg",  ".gif", ".ico",".js")
-
-		if self.path=="/":
-			self.path="/index.html"
-			self.do_index()
-		elif self.path == '/getmaps':
-			self.do_get_maps()
-		elif self.path == '/getfile':
-			self.do_get_file()
-		elif path.path.endswith(allowed_filetypes):
-			self.do_index()
+		"""Present frontpage with user authentication."""
+		auth_header = self.headers.get('Authorization', '').encode('ascii')
+		if auth_header is None:
+			self.do_authhead()
+			self.wfile.write(b"no auth header received")
+		elif auth_header == self.valid_header:
+			path = urlparse(self.path)
+			query = path.query
+			allowed_filetypes = (".html", ".css", ".png", ".jpg",  ".gif", ".ico",".js")
+	
+			if self.path=="/":
+				self.path="/index.html"
+				self.do_index()
+			elif self.path == '/getmaps':
+				self.do_get_maps()
+			elif self.path == '/getfile':
+				self.do_get_file()
+			elif path.path.endswith(allowed_filetypes):
+				self.do_index()
+			else:
+				self.do_index()
 		else:
-			self.do_index()
-		
+			self.do_authhead()
+			self.wfile.write(auth_header)
+			self.wfile.write(b"not authenticated")
+
 		return None
 	
 	def do_get_maps(self):
-		print("Going to get maps")
-		files = glob.glob(os.getcwd() + "/maps/" + "*.json")
-		print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
-		
-		files = os.listdir(os.getcwd() + "/maps/");
+		"""Present frontpage with user authentication."""
+		auth_header = self.headers.get('Authorization', '').encode('ascii')
+		if auth_header is None:
+			self.do_authhead()
+			self.wfile.write(b"no auth header received")
+		elif auth_header == self.valid_header:
+			print("Going to get maps")
+			files = glob.glob(os.getcwd() + "/maps/" + "*.json")
+			print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
+			
+			files = os.listdir(os.getcwd() + "/maps/");
+	
+			self.send_response(200)
+			self.send_header('Content-type','text/json')
+			self.end_headers()
+			self.wfile.write(json.dumps(files).encode('utf-8'))
+			return
+		else:
+			self.do_authhead()
+			self.wfile.write(auth_header)
+			self.wfile.write(b"not authenticated")
 
-		self.send_response(200)
-		self.send_header('Content-type','text/json')
-		self.end_headers()
-		self.wfile.write(json.dumps(files).encode('utf-8'))
-		return
 	
 	def do_get_file(self):
-		print("Going to open file")
-		files = glob.glob(os.getcwd() + "/maps/" + "*.json")
-		print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
+		"""Present frontpage with user authentication."""
+		auth_header = self.headers.get('Authorization', '').encode('ascii')
+		if auth_header is None:
+			self.do_authhead()
+			self.wfile.write(b"no auth header received")
+		elif auth_header == self.valid_header:
+			print("Going to open file")
+			files = glob.glob(os.getcwd() + "/maps/" + "*.json")
+			print(glob.glob(os.getcwd() + "/maps/" + "*.json"))
+	
+			print(files[0])
+			
+			self.send_response(200)
+			self.send_header('Content-type','text/json')
+			self.end_headers()
+			with open(files[0]) as data_file:
+				self.wfile.write(data_file.read().encode('utf-8'))
+			return
+		else:
+			self.do_authhead()
+			self.wfile.write(auth_header)
+			self.wfile.write(b"not authenticated")		
 
-		print(files[0])
-		
-		self.send_response(200)
-		self.send_header('Content-type','text/json')
-		self.end_headers()
-		with open(files[0]) as data_file:
-			self.wfile.write(data_file.read().encode('utf-8'))
-		return
 		
 	# Credit: https://stackoverflow.com/questions/18346583/how-do-i-map-incoming-path-requests-when-using-httpserver
 	# https://stackoverflow.com/questions/3474045/problems-with-my-basehttpserver
@@ -112,18 +151,28 @@ class MyServer(BaseHTTPRequestHandler):
 
 	#	POST is for submitting data.
 	def do_POST(self):
-
-		if self.path=="/save":
-			self.do_save()
-		elif self.path == '/loadmap':
-			self.do_load_map()
+		"""Present frontpage with user authentication."""
+		auth_header = self.headers.get('Authorization', '').encode('ascii')
+		if auth_header is None:
+			self.do_authhead()
+			self.wfile.write(b"no auth header received")
+		elif auth_header == self.valid_header:
+			if self.path=="/save":
+				self.do_save()
+			elif self.path == '/loadmap':
+				self.do_load_map()
+			else:
+				print( "incomming http: ", self.path )
+				self.send_response(200)
+				self.send_header('Content-type','text/html')
+				self.end_headers()
+				self.wfile.write(b"Ok!")
+				return
 		else:
-			print( "incomming http: ", self.path )
-			self.send_response(200)
-			self.send_header('Content-type','text/html')
-			self.end_headers()
-			self.wfile.write(b"Ok!")
-			return
+			self.do_authhead()
+			self.wfile.write(auth_header)
+			self.wfile.write(b"not authenticated")
+
 	
 	def do_load_map(self):
 		print("Going to open the requested file")
@@ -164,6 +213,8 @@ class MyServer(BaseHTTPRequestHandler):
 		self.end_headers()
 		self.wfile.write(b"Ok!")
 		return
+
+
 
 
 myServer = HTTPServer((hostName, hostPort), MyServer)
