@@ -12,7 +12,7 @@ mindmaps.AutoSaveController = function(eventBus, mindmapModel) {
 
   function save() {
     console.debug("Autosaving...");
-    mindmapModel.saveToLocalStorage();
+    mindmapModel.saveToServer();
   }
 
   function autosave() {

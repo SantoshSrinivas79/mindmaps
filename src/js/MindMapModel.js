@@ -231,5 +231,28 @@ mindmaps.MindMapModel = function(eventBus, commandRegistry, undoController) {
     return success;
   }
 
+  this.saveToServer = function() {
+    
+    var filename = this.getMindMap().getRoot().getCaption() + ".json";
+    var content = this.getDocument().prepareSave().serialize();
+    var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+    // window.saveAs(blob, filename);
+    
+    console.log("Going to save to server");
+    
+    $.ajax({
+      type: 'POST',
+      url: '/save',
+      data: blob,
+      contentType: 'application/json', // set accordingly
+      processData: false
+    });
+  
+    var doc = this.getDocument();
+    eventBus.publish(mindmaps.Event.DOCUMENT_SAVED, doc);
+    
+    return true;
+  }
+
   this.init();
 };
