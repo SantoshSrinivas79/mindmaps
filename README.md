@@ -1,6 +1,19 @@
 # mindmaps
 mindmaps is a HTML5 based mind mapping application. It lets you create neat looking mind maps in the browser.
 
+## My Modifications
+
+I tried to create a file called `server.py` to add authentication and run the app.
+
+Steps to run are:
+
+`conda activate ibPy`
+
+`python server.py`
+
+Browse to: `http://104.131.61.242:8996/`
+
+
 This project started in 2011 as an exploration into what's possible to do in browsers using modern APIs. Nowadays, most of this stuff is pretty common and the code base is a bit outdated. This was way before React, ES6, webpack. Heck, it doesn't even use Backbone.
 
 However, there is no reason to change any of that and it makes the code base quite easy to grok. There is no compilation step, no babel plugins, no frameworks. Just a JavaScript application and a very simple Model-View-Presenter pattern.
