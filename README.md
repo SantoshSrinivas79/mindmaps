@@ -7,9 +7,13 @@ I tried to create a file called `server.py` to add authentication and run the ap
 
 Steps to run are:
 
-`conda activate ibPy`
+```sh
+conda activate ibPy
 
-`python server.py`
+pip install sauth
+
+python server.py
+```
 
 Browse to: `http://104.131.61.242:8996/`
 
